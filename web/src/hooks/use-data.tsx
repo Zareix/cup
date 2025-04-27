@@ -6,8 +6,7 @@ export const useData = () => {
   const [isError, setIsError] = useState(false);
   const [data, setData] = useState<Data | null>(null);
 
-  useEffect(() => {
-    if (isLoading || isError || !!data) return;
+  const fetchData = () => {
     setIsLoading(true);
     setIsError(false);
     setData(null);
@@ -30,11 +29,16 @@ export const useData = () => {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [data, isError, isLoading]);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return {
     data,
     isLoading,
     isError,
+    refetch: fetchData,
   };
 };

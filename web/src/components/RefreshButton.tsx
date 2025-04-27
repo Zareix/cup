@@ -1,24 +1,31 @@
 import { useState } from "react";
 import { WithTooltip } from "./Tooltip";
 
-export default function RefreshButton() {
+export default function RefreshButton({
+  refreshData,
+}: {
+  refreshData: () => unknown;
+}) {
   const [disabled, setDisabled] = useState(false);
   const refresh = () => {
     setDisabled(true);
-    const request = new XMLHttpRequest();
-    request.onload = () => {
-      if (request.status === 200) {
-        window.location.reload();
-      }
-    };
-    request.open(
-      "GET",
+    fetch(
       process.env.NODE_ENV === "production"
         ? "./api/v3/refresh"
         : `http://${window.location.hostname}:8000/api/v3/refresh`,
-    );
-    request.send();
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        refreshData();
+      })
+      .catch((error: unknown) => {
+        setDisabled(false);
+        console.error(error);
+      });
   };
+
   return (
     <WithTooltip text="Reload">
       <button className="group shrink-0" onClick={refresh} disabled={disabled}>

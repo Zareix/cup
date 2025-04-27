@@ -23,7 +23,7 @@ const SORT_ORDER = [
 ];
 
 function App() {
-  const { data, isLoading, isError } = useData();
+  const { data, isLoading, isError, refetch } = useData();
   const [searchQuery, setSearchQuery] = useState("");
 
   if (isLoading) return <Loading />;
@@ -64,7 +64,7 @@ function App() {
               className={`flex items-center justify-between px-6 py-4 text-${theme}-500`}
             >
               <LastChecked datetime={data.last_updated} />
-              <RefreshButton />
+              <RefreshButton refreshData={refetch} />
             </div>
             <div className="flex gap-2 px-6 text-black dark:text-white">
               <Search onChange={setSearchQuery} />
