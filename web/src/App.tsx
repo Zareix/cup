@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Logo from "./components/Logo";
 import Statistic from "./components/Statistic";
 import Image from "./components/Image";
 import { LastChecked } from "./components/LastChecked";
@@ -29,73 +28,61 @@ function App() {
   if (isLoading) return <Loading />;
   if (isError || !data) return <DataLoadingError />;
   return (
-    <div
-      className={`flex min-h-screen justify-center bg-white dark:bg-${theme}-950`}
-    >
-      <div className="mx-auto h-full w-full max-w-[80rem] px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto my-8 flex h-full max-w-[48rem] flex-col">
-          <div className="flex items-center gap-1">
-            <h1 className="text-5xl font-bold tracking-tight lg:text-6xl dark:text-white">
-              Cup
-            </h1>
-            <Logo />
-          </div>
-          <div
-            className={`border shadow-sm border-${theme}-200 dark:border-${theme}-900 my-8 rounded-md`}
-          >
-            <dl className="grid grid-cols-2 gap-1 overflow-hidden *:relative lg:grid-cols-4">
-              {Object.entries(data.metrics)
-                .sort((a, b) => {
-                  return SORT_ORDER.indexOf(a[0]) - SORT_ORDER.indexOf(b[0]);
-                })
-                .map(([name]) => (
-                  <Statistic
-                    name={name as keyof typeof data.metrics}
-                    metrics={data.metrics}
-                    key={name}
-                  />
-                ))}
-            </dl>
-          </div>
-          <div
-            className={`border shadow-sm border-${theme}-200 dark:border-${theme}-900 my-8 rounded-md`}
-          >
-            <div
-              className={`flex items-center justify-between px-6 py-4 text-${theme}-500`}
-            >
-              <LastChecked datetime={data.last_updated} />
-              <RefreshButton />
-            </div>
-            <div className="flex gap-2 px-6 text-black dark:text-white">
-              <Search onChange={setSearchQuery} />
-            </div>
-            <ul>
-              {Object.entries(
-                data.images.reduce<Record<string, typeof data.images>>(
-                  (acc, image) => {
-                    const server = image.server ?? "";
-                    if (!Object.hasOwn(acc, server)) acc[server] = [];
-                    acc[server].push(image);
-                    return acc;
-                  },
-                  {},
-                ),
-              )
-                .sort()
-                .map(([server, images]) => (
-                  <Server name={server} key={server}>
-                    {images
-                      .filter((image) => image.reference.includes(searchQuery))
-                      .map((image) => (
-                        <Image data={image} key={image.reference} />
-                      ))}
-                  </Server>
-                ))}
-            </ul>
-          </div>
-        </div>
+    <>
+      <div
+        className={`border shadow-sm border-${theme}-200 dark:border-${theme}-900 my-8 rounded-md`}
+      >
+        <dl className="grid grid-cols-2 gap-1 overflow-hidden *:relative lg:grid-cols-4">
+          {Object.entries(data.metrics)
+            .sort((a, b) => {
+              return SORT_ORDER.indexOf(a[0]) - SORT_ORDER.indexOf(b[0]);
+            })
+            .map(([name]) => (
+              <Statistic
+                name={name as keyof typeof data.metrics}
+                metrics={data.metrics}
+                key={name}
+              />
+            ))}
+        </dl>
       </div>
-    </div>
+      <div
+        className={`border shadow-sm border-${theme}-200 dark:border-${theme}-900 my-8 rounded-md`}
+      >
+        <div
+          className={`flex items-center justify-between px-6 py-4 text-${theme}-500`}
+        >
+          <LastChecked datetime={data.last_updated} />
+          <RefreshButton />
+        </div>
+        <div className="flex gap-2 px-6 text-black dark:text-white">
+          <Search onChange={setSearchQuery} />
+        </div>
+        <ul>
+          {Object.entries(
+            data.images.reduce<Record<string, typeof data.images>>(
+              (acc, image) => {
+                const server = image.server ?? "";
+                if (!Object.hasOwn(acc, server)) acc[server] = [];
+                acc[server].push(image);
+                return acc;
+              },
+              {},
+            ),
+          )
+            .sort()
+            .map(([server, images]) => (
+              <Server name={server} key={server}>
+                {images
+                  .filter((image) => image.reference.includes(searchQuery))
+                  .map((image) => (
+                    <Image data={image} key={image.reference} />
+                  ))}
+              </Server>
+            ))}
+        </ul>
+      </div>
+    </>
   );
 }
 

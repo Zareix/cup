@@ -2,15 +2,12 @@ import { useEffect, useState } from "react";
 import type { Data } from "../types";
 
 export const useData = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [data, setData] = useState<Data | null>(null);
 
   useEffect(() => {
-    if (isLoading || isError || !!data) return;
-    setIsLoading(true);
-    setIsError(false);
-    setData(null);
+    if (!isLoading || isError || !!data) return;
     fetch(
       process.env.NODE_ENV === "production"
         ? "./api/v3/json"
